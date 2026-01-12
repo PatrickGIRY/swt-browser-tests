@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.*;
 import java.nio.file.Paths;
 
 public class SearchView {
-    private Display display;
+    private final Display display;
     private Shell shell;
     private Text searchText;
     private Browser browser;
