@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1} - %m%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+        <RollingFile name="rollingFileOut"
+                     fileName="logs/swt-browser-tests-app.log"
+                     filePattern="logs/swt-browser-tests-app-%d{yyyy-MM-dd}.log"
+                     append="true">
+            <DefaultRolloverStrategy max="15"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <CronTriggeringPolicy schedule="0 0 0 * * ?"/>
+                <SizeBasedTriggeringPolicy size="100k"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="rollingFileOut"/>
+        </Root>
+        <Logger name="org.jline.terminal" level="DEBUG" additivity="false">
+            <AppenderRef ref="rollingFileOut"/>
+        </Logger>
+        <Logger name="tools.notebook.shelf" level="DEBUG" additivity="false">
+            <AppenderRef ref="rollingFileOut"/>
+        </Logger>
+    </Loggers>
+</Configuration>
