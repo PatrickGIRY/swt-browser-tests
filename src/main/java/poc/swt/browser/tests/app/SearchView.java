@@ -21,7 +21,7 @@ public class SearchView {
     private void createContents() {
         shell = new Shell(display);
         shell.setSize(800, 600); // Largeur x Hauteur en pixels
-// Ou pour une taille minimale :
+        // Ou pour une taille minimale :
         shell.setMinimumSize(800, 600);
         shell.setLayout(new GridLayout(1, false));
 
