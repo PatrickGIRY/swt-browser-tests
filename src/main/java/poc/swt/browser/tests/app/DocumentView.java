@@ -15,7 +15,4 @@ public class DocumentView extends Composite {
         browser.setUrl("about:blank");
     }
 
-    public Browser getBrowser() {
-        return browser;
-    }
 }
