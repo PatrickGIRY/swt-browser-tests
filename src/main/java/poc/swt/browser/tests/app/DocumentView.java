@@ -6,12 +6,11 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 public class DocumentView extends Composite {
-    private final Browser browser;
 
     public DocumentView(Composite parent, int style) {
         super(parent, style);
         setLayout(new FillLayout());
-        browser = new Browser(this, SWT.NONE);
+        Browser browser = new Browser(this, SWT.NONE);
         browser.setUrl("about:blank");
     }
 
