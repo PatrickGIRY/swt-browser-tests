@@ -6,7 +6,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 public class DocumentView extends Composite {
-    private Browser browser;
+    private final Browser browser;
 
     public DocumentView(Composite parent, int style) {
         super(parent, style);
