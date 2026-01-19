@@ -1,4 +1,4 @@
-package poc.swt.browser.tests.app;
+package poc.swt.browser.tests.app.view;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
