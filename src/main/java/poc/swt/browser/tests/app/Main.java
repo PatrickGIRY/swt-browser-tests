@@ -28,6 +28,7 @@ public class Main {
                 display.sleep();
             }
         }
+        documentView.dispose();
         display.dispose();
     }
 }
