@@ -5,7 +5,6 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
@@ -22,12 +21,11 @@ public class DocumentView extends Composite {
         urlText = new Text(this, SWT.BORDER);
         urlText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         urlText.setText("about:blank");
-
-        // Bouton pour charger l'URL
-        Button loadButton = new Button(this, SWT.PUSH);
-        loadButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-        loadButton.setText("Charger");
-        loadButton.addListener(SWT.Selection, e -> loadUrl());
+        urlText.addListener(SWT.KeyDown, e -> {
+            if (e.keyCode == SWT.CR) {
+                loadUrl();
+            }
+        });
 
         // Navigateur
         browser = new Browser(this, SWT.NONE);
