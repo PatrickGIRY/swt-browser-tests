@@ -10,7 +10,7 @@ public class DocumentViewModel {
     }
 
     public void loadUrl(String url) {
-        this.document = new HtmlDocument(url, "");
+        this.document = new HtmlDocument(url);
     }
 
     public String currentUrl() {

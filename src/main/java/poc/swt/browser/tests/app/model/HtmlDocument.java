@@ -9,6 +9,10 @@ public record HtmlDocument(String url, String content) {
         this("about:blank", "");
     }
 
+    public HtmlDocument(String url) {
+        this(url, "");
+    }
+
     public HtmlDocument(String url, String content) {
         try {
             this.url = new URL(url).toString();
