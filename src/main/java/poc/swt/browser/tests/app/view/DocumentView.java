@@ -10,9 +10,9 @@ import poc.swt.browser.tests.app.viewmodel.DocumentViewModel;
 
 public class DocumentView extends Composite {
 
-    private Browser browser;
-    private Text urlText;
-    private DocumentViewModel viewModel;
+    private final Browser browser;
+    private final  Text urlText;
+    private final DocumentViewModel viewModel;
 
     public DocumentView(Composite parent, int style) {
         super(parent, style);
