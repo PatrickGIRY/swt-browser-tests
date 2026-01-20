@@ -5,8 +5,10 @@ import java.net.URL;
 
 public record HtmlDocument(String url, String content) {
 
+    public static final String ABOUT_BLANK_URL = "about:blank";
+
     public HtmlDocument() {
-        this("about:blank", "");
+        this(ABOUT_BLANK_URL, "");
     }
 
     public HtmlDocument(String url) {
@@ -15,7 +17,7 @@ public record HtmlDocument(String url, String content) {
 
     public HtmlDocument(String url, String content) {
         try {
-            this.url = new URL(url).toString();
+            this.url = ABOUT_BLANK_URL.equals(url) ? ABOUT_BLANK_URL : new URL(url).toString();
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
