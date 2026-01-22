@@ -1,15 +1,16 @@
 package poc.swt.browser.tests.app.viewmodel;
 
-import poc.swt.browser.tests.app.eventbus.EventBus;
 import poc.swt.browser.tests.app.model.HtmlDocument;
 
+import java.util.function.Consumer;
+
 public class DocumentViewModel {
+    private final Consumer<CurrentUrlUpdated> currentUrlUpdatedConsumer;
     private HtmlDocument document;
 
-    private final EventBus<Event> eventBus;
+    public DocumentViewModel(Consumer<CurrentUrlUpdated> currentUrlUpdatedConsumer) {
+        this.currentUrlUpdatedConsumer = currentUrlUpdatedConsumer;
 
-    public DocumentViewModel(EventBus<Event> eventBus) {
-        this.eventBus = eventBus;
         this.document = new HtmlDocument();
     }
 
@@ -17,7 +18,7 @@ public class DocumentViewModel {
         if (newUrl != null && !newUrl.isEmpty()) {
             final var oldUrl = document.url();
             this.document = new HtmlDocument(newUrl);
-            eventBus.publish(new CurrentUrlUpdated(oldUrl, newUrl));
+           currentUrlUpdatedConsumer.accept(new CurrentUrlUpdated(oldUrl, newUrl));
         }
     }
 
