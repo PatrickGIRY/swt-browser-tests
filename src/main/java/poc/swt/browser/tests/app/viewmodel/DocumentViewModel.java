@@ -5,28 +5,71 @@ import poc.swt.browser.tests.app.model.HtmlDocument;
 import java.util.function.Consumer;
 
 public class DocumentViewModel {
-    private final Consumer<CurrentUrlUpdated> currentUrlUpdatedConsumer;
+
+    private String addressBarText;
+
+    private String browserUrl;
+
+    private String browserText;
+
+    private final Consumer<LocationUpdated> currentUrlUpdatedConsumer;
+
     private HtmlDocument document;
 
-    public DocumentViewModel(Consumer<CurrentUrlUpdated> currentUrlUpdatedConsumer) {
+    public DocumentViewModel(Consumer<LocationUpdated> currentUrlUpdatedConsumer) {
         this.currentUrlUpdatedConsumer = currentUrlUpdatedConsumer;
-
         this.document = new HtmlDocument();
+        initFromDocument();
     }
 
-    public void setCurrentUrl(String newUrl) {
-        if (newUrl != null && !newUrl.isEmpty()) {
-            final var oldUrl = document.url();
-            this.document = new HtmlDocument(newUrl);
-           currentUrlUpdatedConsumer.accept(new CurrentUrlUpdated(oldUrl, newUrl));
+    private void initFromDocument() {
+        addressBarText = document.url();
+        browserUrl =  document.url();
+        browserText = document.content();
+    }
+
+    public String addressBarText() {
+        return addressBarText;
+    }
+
+    public void setAddressBarText(String addressBarText) {
+        this.addressBarText = addressBarText;
+    }
+
+    public String browserUrl() {
+        return browserUrl;
+    }
+
+    public void setBrowserUrl(String browserUrl) {
+        this.browserUrl = browserUrl;
+        updateDocument();
+    }
+
+    public String browserText() {
+        return browserText;
+    }
+
+    public void setBrowserText(String browserText) {
+        this.browserText = browserText;
+        updateDocument();
+    }
+
+    public HtmlDocument document() {
+        return document;
+    }
+
+    public void changeLocation() {
+        if (addressBarText != null && !addressBarText.isEmpty()) {
+           setBrowserUrl(addressBarText);
+           currentUrlUpdatedConsumer.accept(new LocationUpdated(addressBarText));
+        } else {
+            setBrowserUrl("");
+            currentUrlUpdatedConsumer.accept(new LocationUpdated(browserUrl));
         }
     }
 
-    public String currentUrl() {
-        return document.url();
-    }
-
-    public void setNewContent(String url, String content) {
-        document = new HtmlDocument(url, content);
+    private void updateDocument() {
+        document = new HtmlDocument(browserUrl, browserText);
+        initFromDocument();
     }
 }
