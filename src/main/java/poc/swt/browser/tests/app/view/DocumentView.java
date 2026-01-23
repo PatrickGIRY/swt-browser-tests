@@ -4,16 +4,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+import poc.swt.browser.tests.app.util.OSUtils;
 import poc.swt.browser.tests.app.viewmodel.LocationUpdated;
 import poc.swt.browser.tests.app.viewmodel.DocumentViewModel;
 
 public class DocumentView extends Composite  {
-
     private final Text addressBarText;
     private final Browser browser;
     private final DocumentViewModel viewModel;
@@ -47,6 +49,24 @@ public class DocumentView extends Composite  {
                 viewModel.setBrowserText(browser.getText());
             }
         });
+
+        browser.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.keyCode == 'f' && isCtrlPressed(e)) {
+                    openSearchDialog();
+                }
+            }
+        });
+    }
+
+    private void openSearchDialog() {
+        final var browserSearchDialog = new BrowserSearchDialog(browser);
+        browserSearchDialog.open();
+    }
+
+    private boolean isCtrlPressed(KeyEvent e) {
+        return OSUtils.isMac() ? (e.stateMask & SWT.COMMAND) != 0 : (e.stateMask & SWT.CTRL) != 0;
     }
 
     private void onCurrentUrlUpdated(LocationUpdated event) {
