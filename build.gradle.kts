@@ -50,6 +50,7 @@ configurations.all {
 }
 
 dependencies {
+    implementation("org.jsoup:jsoup:1.22.1")
     implementation("commons-io:commons-io:2.14.0")
     implementation("org.eclipse.platform:org.eclipse.ui:3.207.200")
     implementation("org.eclipse.platform:org.eclipse.swt.\${osgi.platform}:3.130.0")

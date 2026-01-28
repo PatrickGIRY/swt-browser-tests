@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 public class BrowserSearchDialog extends Dialog {
 
-    private BrowserSearchViewModel viewModel;
+    private final BrowserSearchViewModel viewModel;
     private Text searchText;
     private Button caseSensitiveButton;
     private Button wholeWordButton;
@@ -32,8 +32,11 @@ public class BrowserSearchDialog extends Dialog {
     }
 
     private static Consumer<ContentEnrichedBySearchResults> onContentEnrichedBySearchResults(Browser browser) {
-        return contentEnrichedBySearchResults ->
-                browser.setText(contentEnrichedBySearchResults.enrichedContent());
+        return contentEnrichedBySearchResults -> {
+            browser.setText(contentEnrichedBySearchResults.enrichedContent());
+            browser.setRedraw(true);
+        };
+
     }
 
 
@@ -110,7 +113,7 @@ public class BrowserSearchDialog extends Dialog {
                 previousOccurrenceButton.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
-                        viewModel.previousOccurence();
+                        viewModel.previousOccurrence();
                     }
                 });
 
