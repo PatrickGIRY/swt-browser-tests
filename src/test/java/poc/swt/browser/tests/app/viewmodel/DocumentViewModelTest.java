@@ -37,7 +37,7 @@ class DocumentViewModelTest {
 
         assertEquals(newUrl, viewModel.browserUrl());
         assertEquals("", viewModel.browserText());
-        assertEquals(new LocationUpdated(newUrl), locationUpdated);
+        assertEquals(new LocationUpdated(), locationUpdated);
         assertEquals(new HtmlDocument(newUrl), viewModel.document());
     }
 
@@ -49,8 +49,9 @@ class DocumentViewModelTest {
 
         assertEquals(HtmlDocument.ABOUT_BLANK_URL, viewModel.browserUrl());
         assertEquals("", viewModel.browserText());
-        assertEquals(new LocationUpdated(HtmlDocument.ABOUT_BLANK_URL), locationUpdated);
+        assertEquals(new LocationUpdated(), locationUpdated);
         assertEquals(new HtmlDocument(newUrl), viewModel.document());
+        assertEquals(HtmlDocument.ABOUT_BLANK_URL, viewModel.addressBarText());
     }
 
     @Test

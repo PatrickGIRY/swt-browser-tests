@@ -61,10 +61,10 @@ public class DocumentViewModel {
     public void changeLocation() {
         if (addressBarText != null && !addressBarText.isEmpty()) {
            setBrowserUrl(addressBarText);
-           currentUrlUpdatedConsumer.accept(new LocationUpdated(addressBarText));
+           currentUrlUpdatedConsumer.accept(new LocationUpdated());
         } else {
             setBrowserUrl("");
-            currentUrlUpdatedConsumer.accept(new LocationUpdated(browserUrl));
+            currentUrlUpdatedConsumer.accept(new LocationUpdated());
         }
     }
 

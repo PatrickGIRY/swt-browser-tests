@@ -70,8 +70,7 @@ public class DocumentView extends Composite  {
     }
 
     private void onCurrentUrlUpdated(LocationUpdated event) {
-        final var url = event.newUrl();
-        browser.setUrl(url);
-        addressBarText.setText(url);
+        browser.setUrl(viewModel.browserUrl());
+        addressBarText.setText(viewModel.addressBarText());
     }
 }
