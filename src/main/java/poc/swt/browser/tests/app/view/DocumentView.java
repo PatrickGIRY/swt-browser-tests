@@ -2,8 +2,6 @@ package poc.swt.browser.tests.app.view;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.ProgressAdapter;
-import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
@@ -17,7 +15,7 @@ import poc.swt.browser.tests.app.viewmodel.DocumentViewModel;
 
 import java.util.function.UnaryOperator;
 
-public class DocumentView extends Composite  {
+public class DocumentView extends Composite {
     private final Text addressBarText;
     private final Browser browser;
     private final DocumentViewModel viewModel;
@@ -42,15 +40,7 @@ public class DocumentView extends Composite  {
         browser = new Browser(this, SWT.NONE);
         browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         browser.setUrl(viewModel.browserUrl());
-        browser.setText(viewModel.browserText());
-        browser.addProgressListener(new ProgressAdapter() {
-
-            @Override
-            public void completed(ProgressEvent event) {
-                viewModel.setBrowserUrl(browser.getUrl());
-                viewModel.setBrowserText(browser.getText());
-            }
-        });
+        browser.setJavascriptEnabled(true);
 
         browser.addKeyListener(new KeyAdapter() {
             @Override

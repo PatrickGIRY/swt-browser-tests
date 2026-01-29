@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import poc.swt.browser.tests.app.util.HtmlDocumentCache;
 import poc.swt.browser.tests.app.view.DocumentView;
 
 public class Main {
@@ -20,7 +21,7 @@ public class Main {
         shell.setSize(800, 600);
         shell.setText("SWT Browser Application");
 
-        DocumentView documentView = new DocumentView(shell, SWT.NONE, s -> s);
+        DocumentView documentView = new DocumentView(shell, SWT.NONE, HtmlDocumentCache::cacheDocument);
 
         shell.open();
         while (!shell.isDisposed()) {
