@@ -20,7 +20,7 @@ public class Main {
         shell.setSize(800, 600);
         shell.setText("SWT Browser Application");
 
-        DocumentView documentView = new DocumentView(shell, SWT.NONE);
+        DocumentView documentView = new DocumentView(shell, SWT.NONE, s -> s);
 
         shell.open();
         while (!shell.isDisposed()) {

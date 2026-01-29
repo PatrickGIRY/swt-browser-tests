@@ -9,8 +9,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
@@ -21,9 +23,12 @@ class DocumentViewModelTest {
     @Mock
     private Consumer<LocationUpdated> currentUrlUpdatedConsumer;
 
+    @Mock
+    private UnaryOperator<String> cacheDocument;
+
     @BeforeEach
     void setUp() {
-        viewModel = new DocumentViewModel(currentUrlUpdatedConsumer);
+        viewModel = new DocumentViewModel(cacheDocument, currentUrlUpdatedConsumer);
     }
 
     @Test
@@ -38,10 +43,13 @@ class DocumentViewModelTest {
     @Test
     void change_location() {
         final var newUrl = "http://newUrl";
+        final var internalUrl = "file://internalUrl";
+
+        given(cacheDocument.apply(newUrl)).willReturn(internalUrl);
         viewModel.setAddressBarText(newUrl);
         viewModel.changeLocation();
 
-        assertEquals(newUrl, viewModel.browserUrl());
+        assertEquals(internalUrl, viewModel.browserUrl());
         assertEquals("", viewModel.browserText());
 
         then(currentUrlUpdatedConsumer).should().accept(new LocationUpdated());

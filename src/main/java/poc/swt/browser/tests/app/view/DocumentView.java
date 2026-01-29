@@ -15,14 +15,16 @@ import poc.swt.browser.tests.app.util.OSUtils;
 import poc.swt.browser.tests.app.viewmodel.LocationUpdated;
 import poc.swt.browser.tests.app.viewmodel.DocumentViewModel;
 
+import java.util.function.UnaryOperator;
+
 public class DocumentView extends Composite  {
     private final Text addressBarText;
     private final Browser browser;
     private final DocumentViewModel viewModel;
 
-    public DocumentView(Composite parent, int style) {
+    public DocumentView(Composite parent, int style, UnaryOperator<String> cacheDocument) {
         super(parent, style);
-        this.viewModel = new DocumentViewModel(this::onCurrentUrlUpdated);
+        this.viewModel = new DocumentViewModel(cacheDocument, this::onCurrentUrlUpdated);
         setLayout(new GridLayout(1, false));
 
         // Champ de texte pour l'URL

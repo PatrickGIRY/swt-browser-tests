@@ -1,6 +1,7 @@
 package poc.swt.browser.tests.app.viewmodel;
 
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 import static java.util.Objects.isNull;
 
@@ -14,9 +15,12 @@ public class DocumentViewModel {
 
     private String browserText;
 
+    private final UnaryOperator<String> cacheDocument;
+
     private final Consumer<LocationUpdated> currentUrlUpdatedConsumer;
 
-    public DocumentViewModel(Consumer<LocationUpdated> currentUrlUpdatedConsumer) {
+    public DocumentViewModel(UnaryOperator<String> cacheDocument, Consumer<LocationUpdated> currentUrlUpdatedConsumer) {
+        this.cacheDocument = cacheDocument;
         this.currentUrlUpdatedConsumer = currentUrlUpdatedConsumer;
         addressBarText = ABOUT_BLANK_URL;
         browserUrl = ABOUT_BLANK_URL;
@@ -57,7 +61,8 @@ public class DocumentViewModel {
 
     public void changeLocation() {
         if (addressBarText != null && !addressBarText.isEmpty()) {
-            setBrowserUrl(addressBarText);
+            final var innerUrl = cacheDocument.apply(addressBarText);
+            setBrowserUrl(innerUrl);
             currentUrlUpdatedConsumer.accept(new LocationUpdated());
         } else {
             setBrowserUrl(ABOUT_BLANK_URL);
