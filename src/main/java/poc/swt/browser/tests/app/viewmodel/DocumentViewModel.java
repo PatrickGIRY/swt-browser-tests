@@ -1,10 +1,12 @@
 package poc.swt.browser.tests.app.viewmodel;
 
-import poc.swt.browser.tests.app.model.HtmlDocument;
-
 import java.util.function.Consumer;
 
+import static java.util.Objects.isNull;
+
 public class DocumentViewModel {
+
+    public static final String ABOUT_BLANK_URL = "about:blank";
 
     private String addressBarText;
 
@@ -14,18 +16,11 @@ public class DocumentViewModel {
 
     private final Consumer<LocationUpdated> currentUrlUpdatedConsumer;
 
-    private HtmlDocument document;
-
     public DocumentViewModel(Consumer<LocationUpdated> currentUrlUpdatedConsumer) {
         this.currentUrlUpdatedConsumer = currentUrlUpdatedConsumer;
-        this.document = new HtmlDocument();
-        initFromDocument();
-    }
-
-    private void initFromDocument() {
-        addressBarText = document.url();
-        browserUrl =  document.url();
-        browserText = document.content();
+        addressBarText = ABOUT_BLANK_URL;
+        browserUrl = ABOUT_BLANK_URL;
+        browserText = "";
     }
 
     public String addressBarText() {
@@ -41,8 +36,15 @@ public class DocumentViewModel {
     }
 
     public void setBrowserUrl(String browserUrl) {
-        this.browserUrl = browserUrl;
-        updateDocument();
+        if (isNullOREmpty(browserUrl)) {
+            this.browserUrl = ABOUT_BLANK_URL;
+        } else {
+            this.browserUrl = browserUrl;
+        }
+    }
+
+    private static boolean isNullOREmpty(String url) {
+        return isNull(url) || url.trim().isEmpty();
     }
 
     public String browserText() {
@@ -51,25 +53,17 @@ public class DocumentViewModel {
 
     public void setBrowserText(String browserText) {
         this.browserText = browserText;
-        updateDocument();
-    }
-
-    public HtmlDocument document() {
-        return document;
     }
 
     public void changeLocation() {
         if (addressBarText != null && !addressBarText.isEmpty()) {
-           setBrowserUrl(addressBarText);
-           currentUrlUpdatedConsumer.accept(new LocationUpdated());
+            setBrowserUrl(addressBarText);
+            currentUrlUpdatedConsumer.accept(new LocationUpdated());
         } else {
-            setBrowserUrl("");
+            setBrowserUrl(ABOUT_BLANK_URL);
+            setAddressBarText(ABOUT_BLANK_URL);
             currentUrlUpdatedConsumer.accept(new LocationUpdated());
         }
     }
 
-    private void updateDocument() {
-        document = new HtmlDocument(browserUrl, browserText);
-        initFromDocument();
-    }
 }
