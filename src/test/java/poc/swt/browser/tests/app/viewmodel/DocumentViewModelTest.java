@@ -2,22 +2,29 @@ package poc.swt.browser.tests.app.viewmodel;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
-import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import poc.swt.browser.tests.app.model.HtmlDocument;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.function.Consumer;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.then;
+
+@ExtendWith(MockitoExtension.class)
 class DocumentViewModelTest {
 
     private DocumentViewModel viewModel;
-    private LocationUpdated locationUpdated;
+
+    @Mock
+    private Consumer<LocationUpdated> currentUrlUpdatedConsumer;
 
     @BeforeEach
     void setUp() {
-        viewModel = new DocumentViewModel(locationUpdated -> this.locationUpdated = locationUpdated);
+        viewModel = new DocumentViewModel(currentUrlUpdatedConsumer);
     }
 
     @Test
@@ -25,8 +32,9 @@ class DocumentViewModelTest {
         assertEquals(HtmlDocument.ABOUT_BLANK_URL, viewModel.addressBarText());
         assertEquals(HtmlDocument.ABOUT_BLANK_URL, viewModel.browserUrl());
         assertEquals("", viewModel.browserText());
-        assertNull(locationUpdated);
         assertEquals(new HtmlDocument(), viewModel.document());
+
+        then(currentUrlUpdatedConsumer).shouldHaveNoInteractions();
     }
 
     @Test
@@ -37,8 +45,9 @@ class DocumentViewModelTest {
 
         assertEquals(newUrl, viewModel.browserUrl());
         assertEquals("", viewModel.browserText());
-        assertEquals(new LocationUpdated(), locationUpdated);
         assertEquals(new HtmlDocument(newUrl), viewModel.document());
+
+        then(currentUrlUpdatedConsumer).should().accept(new LocationUpdated());
     }
 
     @Test
@@ -49,9 +58,10 @@ class DocumentViewModelTest {
 
         assertEquals(HtmlDocument.ABOUT_BLANK_URL, viewModel.browserUrl());
         assertEquals("", viewModel.browserText());
-        assertEquals(new LocationUpdated(), locationUpdated);
         assertEquals(new HtmlDocument(newUrl), viewModel.document());
         assertEquals(HtmlDocument.ABOUT_BLANK_URL, viewModel.addressBarText());
+
+        then(currentUrlUpdatedConsumer).should().accept(new LocationUpdated());
     }
 
     @Test
@@ -66,12 +76,19 @@ class DocumentViewModelTest {
     }
 
     @ParameterizedTest
-    @NullSource
-    @EmptySource
-    @ValueSource(strings = {"  "})
-    void set_null_or_empty_browser_url(String url) {
+    @ValueSource(strings = {""," "})
+    void set_empty_browser_url(String url) {
 
         viewModel.setBrowserUrl(url);
+
+        assertEquals(HtmlDocument.ABOUT_BLANK_URL, viewModel.browserUrl());
+        assertEquals(new HtmlDocument(HtmlDocument.ABOUT_BLANK_URL,  ""), viewModel.document());
+    }
+
+    @Test
+    void set_null_browser_url() {
+
+        viewModel.setBrowserUrl(null);
 
         assertEquals(HtmlDocument.ABOUT_BLANK_URL, viewModel.browserUrl());
         assertEquals(new HtmlDocument(HtmlDocument.ABOUT_BLANK_URL,  ""), viewModel.document());
