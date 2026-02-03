@@ -79,11 +79,15 @@ public class BrowserSearchViewModel {
     public void nextOccurrence() {
         if (currentOccurrenceIndex < lastOccurrenceIndex) {
             currentOccurrenceIndex++;
+            previousOccurrenceEnabled = true;
         }
     }
 
     public void previousOccurrence() {
-
+        if (currentOccurrenceIndex > 1) {
+            currentOccurrenceIndex--;
+            previousOccurrenceEnabled = currentOccurrenceIndex > 1;
+        }
     }
 
     public void cancelSearch() {

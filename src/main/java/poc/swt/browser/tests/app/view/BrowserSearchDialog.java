@@ -29,7 +29,6 @@ public class BrowserSearchDialog extends Dialog {
     private Button previousOccurrenceButton;
     private Button closeButton;
 
-
     public BrowserSearchDialog(Browser browser) {
         super(browser.getShell());
         setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE);
@@ -58,10 +57,9 @@ public class BrowserSearchDialog extends Dialog {
         return contentEnrichedBySearchResults -> {
             browser.setText(contentEnrichedBySearchResults.enrichedContent());
             nextOccurrenceButton.setEnabled(viewModel.nextOccurrenceEnabled());
+            previousOccurrenceButton.setEnabled(viewModel.previousOccurrenceEnabled());
         };
-
     }
-
 
     @Override
     protected Control createDialogArea(Composite parent) {
@@ -80,7 +78,7 @@ public class BrowserSearchDialog extends Dialog {
                 searchText = new Text(group, SWT.BORDER);
                 searchText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
                 searchText.addModifyListener(e -> viewModel.setSearchText(searchText.getText()));
-                searchText.addKeyListener(new  KeyAdapter() {
+                searchText.addKeyListener(new KeyAdapter() {
                     @Override
                     public void keyReleased(KeyEvent e) {
                         if(e.keyCode == SWT.CR){
@@ -138,6 +136,7 @@ public class BrowserSearchDialog extends Dialog {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         viewModel.previousOccurrence();
+                        scrollToMatch();
                     }
                 });
 
