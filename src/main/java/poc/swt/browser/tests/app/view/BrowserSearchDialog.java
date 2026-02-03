@@ -125,6 +125,7 @@ public class BrowserSearchDialog extends Dialog {
                     public void widgetSelected(SelectionEvent e) {
                         viewModel.nextOccurrence();
                         scrollToMatch();
+                        previousOccurrenceButton.setEnabled(viewModel.previousOccurrenceEnabled());
                     }
                 });
 
@@ -137,6 +138,7 @@ public class BrowserSearchDialog extends Dialog {
                     public void widgetSelected(SelectionEvent e) {
                         viewModel.previousOccurrence();
                         scrollToMatch();
+                        nextOccurrenceButton.setEnabled(viewModel.nextOccurrenceEnabled());
                     }
                 });
 
