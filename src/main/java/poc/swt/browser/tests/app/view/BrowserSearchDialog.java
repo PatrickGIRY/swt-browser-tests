@@ -51,6 +51,8 @@ public class BrowserSearchDialog extends Dialog {
                 """, viewModel.currentOccurrenceIndex());
         LOG.info("focus match element script \"{}\"", script);
         browser.execute(script);
+        nextOccurrenceButton.setEnabled(viewModel.nextOccurrenceEnabled());
+        previousOccurrenceButton.setEnabled(viewModel.previousOccurrenceEnabled());
     }
 
     private Consumer<ContentEnrichedBySearchResults> onContentEnrichedBySearchResults(Browser browser) {
@@ -125,7 +127,6 @@ public class BrowserSearchDialog extends Dialog {
                     public void widgetSelected(SelectionEvent e) {
                         viewModel.nextOccurrence();
                         scrollToMatch();
-                        previousOccurrenceButton.setEnabled(viewModel.previousOccurrenceEnabled());
                     }
                 });
 
@@ -138,7 +139,6 @@ public class BrowserSearchDialog extends Dialog {
                     public void widgetSelected(SelectionEvent e) {
                         viewModel.previousOccurrence();
                         scrollToMatch();
-                        nextOccurrenceButton.setEnabled(viewModel.nextOccurrenceEnabled());
                     }
                 });
 
