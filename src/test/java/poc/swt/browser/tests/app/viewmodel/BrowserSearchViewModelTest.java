@@ -37,6 +37,7 @@ class BrowserSearchViewModelTest {
                 """).html(), contentEnrichedBySearchResults.enrichedContent());
 
         assertFalse(browserSearchViewModel.nextOccurrenceEnabled());
+        assertFalse(browserSearchViewModel.previousOccurrenceEnabled());
     }
     @Test
     void search_several_occurrences_in_text_in_html_document_text_nodes() {
@@ -55,5 +56,6 @@ class BrowserSearchViewModelTest {
                 """).html(), contentEnrichedBySearchResults.enrichedContent());
 
         assertTrue(browserSearchViewModel.nextOccurrenceEnabled());
+        assertFalse(browserSearchViewModel.previousOccurrenceEnabled());
     }
 }
