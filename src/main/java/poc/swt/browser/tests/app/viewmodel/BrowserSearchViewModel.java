@@ -68,10 +68,6 @@ public class BrowserSearchViewModel {
         return previousOccurrenceEnabled;
     }
 
-    public void setPreviousOccurrenceEnabled(boolean previousOccurrenceEnabled) {
-        this.previousOccurrenceEnabled = previousOccurrenceEnabled;
-    }
-
     public int currentOccurrenceIndex() {
         return currentOccurrenceIndex;
     }
