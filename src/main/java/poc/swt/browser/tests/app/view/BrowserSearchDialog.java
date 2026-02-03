@@ -39,6 +39,7 @@ public class BrowserSearchDialog extends Dialog {
         browser.addProgressListener(new ProgressAdapter() {
             @Override
             public void completed(ProgressEvent event) {
+                LOG.info("Browser search completed");
                 scrollToMatch();
             }
         });
@@ -126,7 +127,7 @@ public class BrowserSearchDialog extends Dialog {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         viewModel.nextOccurrence();
-                        scrollToMatch();
+                        browser.setText(browser.getText());
                     }
                 });
 
@@ -138,7 +139,7 @@ public class BrowserSearchDialog extends Dialog {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         viewModel.previousOccurrence();
-                        scrollToMatch();
+                        browser.setText(browser.getText());
                     }
                 });
 
