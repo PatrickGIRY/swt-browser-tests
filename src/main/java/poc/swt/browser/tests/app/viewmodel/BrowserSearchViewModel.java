@@ -1,15 +1,12 @@
 package poc.swt.browser.tests.app.viewmodel;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -21,21 +18,22 @@ public class BrowserSearchViewModel {
 
     private final Consumer<ContentEnrichedBySearchResults> contentEnrichedBySearchResultsConsumer;
 
-    private String searchText;
-
     private Pattern searchTextPattern;
 
     private boolean caseSensitive;
 
     private boolean wholeWord;
 
-    private boolean nextOccurrenceEnabled;
-
     private boolean previousOccurrenceEnabled;
+
+    private int currentOccurrenceIndex;
+    private int lastOccurrenceIndex;
 
     public BrowserSearchViewModel(String originalContent, Consumer<ContentEnrichedBySearchResults> contentEnrichedBySearchResultsConsumer) {
         this.originalContent = originalContent;
         this.contentEnrichedBySearchResultsConsumer = contentEnrichedBySearchResultsConsumer;
+        this.currentOccurrenceIndex = 0;
+        this.lastOccurrenceIndex = 0;
     }
 
     public String searchText() {
@@ -63,11 +61,7 @@ public class BrowserSearchViewModel {
     }
 
     public boolean nextOccurrenceEnabled() {
-        return nextOccurrenceEnabled;
-    }
-
-    public void setNextOccurrenceEnabled(boolean nextOccurrenceEnabled) {
-        this.nextOccurrenceEnabled = nextOccurrenceEnabled;
+        return currentOccurrenceIndex > 0 && currentOccurrenceIndex < lastOccurrenceIndex;
     }
 
     public boolean previousOccurrenceEnabled() {
@@ -78,8 +72,14 @@ public class BrowserSearchViewModel {
         this.previousOccurrenceEnabled = previousOccurrenceEnabled;
     }
 
-    public void nextOccurrence() {
+    public int currentOccurrenceIndex() {
+        return currentOccurrenceIndex;
+    }
 
+    public void nextOccurrence() {
+        if (currentOccurrenceIndex < lastOccurrenceIndex) {
+            currentOccurrenceIndex++;
+        }
     }
 
     public void previousOccurrence() {
@@ -93,18 +93,18 @@ public class BrowserSearchViewModel {
     public void searchOccurrences() {
 
         final var document = Jsoup.parse(this.originalContent);
-        int index = 0;
         for (final var node : document.body().childNodes()) {
-            processNode(node, index);
+            processNode(node);
         }
         final var enrichedContent = document.html();
+        this.currentOccurrenceIndex = 1;
         contentEnrichedBySearchResultsConsumer.accept(new ContentEnrichedBySearchResults(enrichedContent));
     }
 
-    private void processNode(Node node, int index) {
+    private void processNode(Node node) {
         if (node instanceof TextNode textNode) {
             final var text = textNode.text();
-            final var processedText = processText(index, text);
+            final var processedText = processText(text);
             if (!processedText.equals(text)) {
                 Element parent = textNode.parent();
                 if (parent != null) {
@@ -114,19 +114,19 @@ public class BrowserSearchViewModel {
         }
         else if (node instanceof Element element) {
             for (final var childNode : element.childNodes()) {
-                processNode(childNode, index);
+                processNode(childNode);
             }
         }
     }
 
-    private String processText(int index, String text) {
+    private String processText(String text) {
         final var matcher = searchTextPattern.matcher(text);
         final var contentEnrichedBuilder = new StringBuilder();
         while (matcher.find()) {
             String textFound = matcher.group();
             if (textFound != null && !textFound.isEmpty()) {
                 LOG.info("Text found \"{}\" ({},{})", textFound, matcher.start(), matcher.end());
-                matcher.appendReplacement(contentEnrichedBuilder, wrapText(++index, textFound));
+                matcher.appendReplacement(contentEnrichedBuilder, wrapText(++lastOccurrenceIndex, textFound));
             }
         }
         matcher.appendTail(contentEnrichedBuilder);

@@ -3,10 +3,14 @@ package poc.swt.browser.tests.app.view;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressAdapter;
+import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import poc.swt.browser.tests.app.viewmodel.BrowserSearchViewModel;
 import poc.swt.browser.tests.app.viewmodel.ContentEnrichedBySearchResults;
 
@@ -14,7 +18,10 @@ import java.util.function.Consumer;
 
 public class BrowserSearchDialog extends Dialog {
 
+    private static final Logger LOG = LoggerFactory.getLogger(BrowserSearchDialog.class);
+
     private final BrowserSearchViewModel viewModel;
+    private final Browser browser;
     private Text searchText;
     private Button caseSensitiveButton;
     private Button wholeWordButton;
@@ -26,15 +33,31 @@ public class BrowserSearchDialog extends Dialog {
     public BrowserSearchDialog(Browser browser) {
         super(browser.getShell());
         setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE);
+        this.browser = browser;
         viewModel = new BrowserSearchViewModel(
                 browser.getText(),
                 onContentEnrichedBySearchResults(browser));
+        browser.addProgressListener(new ProgressAdapter() {
+            @Override
+            public void completed(ProgressEvent event) {
+                scrollToMatch();
+            }
+        });
     }
 
-    private static Consumer<ContentEnrichedBySearchResults> onContentEnrichedBySearchResults(Browser browser) {
+    private void scrollToMatch() {
+        String script = String.format("""
+                let matchElement = document.getElementById('match-%d');
+                matchElement.scrollIntoView();
+                """, viewModel.currentOccurrenceIndex());
+        LOG.info("focus match element script \"{}\"", script);
+        browser.execute(script);
+    }
+
+    private Consumer<ContentEnrichedBySearchResults> onContentEnrichedBySearchResults(Browser browser) {
         return contentEnrichedBySearchResults -> {
             browser.setText(contentEnrichedBySearchResults.enrichedContent());
-            browser.setRedraw(true);
+            nextOccurrenceButton.setEnabled(viewModel.nextOccurrenceEnabled());
         };
 
     }
@@ -103,6 +126,7 @@ public class BrowserSearchDialog extends Dialog {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         viewModel.nextOccurrence();
+                        scrollToMatch();
                     }
                 });
 

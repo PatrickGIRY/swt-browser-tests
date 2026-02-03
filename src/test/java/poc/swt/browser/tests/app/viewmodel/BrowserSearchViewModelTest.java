@@ -23,7 +23,7 @@ class BrowserSearchViewModelTest {
     }
 
     @Test
-    void search_a_text_in_html_document_text_nodes() {
+    void search_one_occurrence_in_text_in_html_document_text_nodes() {
         final var browserSearchViewModel = new BrowserSearchViewModel(Jsoup.parseBodyFragment("""
                 <p>This is a test text</p>
                 """).html(),
@@ -35,5 +35,25 @@ class BrowserSearchViewModelTest {
         assertEquals(Jsoup.parseBodyFragment("""
                 <p>This is a <span style='background-color: yellow' id='match-1'>test</span> text</p>
                 """).html(), contentEnrichedBySearchResults.enrichedContent());
+
+        assertFalse(browserSearchViewModel.nextOccurrenceEnabled());
+    }
+    @Test
+    void search_several_occurrences_in_text_in_html_document_text_nodes() {
+        final var browserSearchViewModel = new BrowserSearchViewModel(Jsoup.parseBodyFragment("""
+                <p>This is a test text.</p>
+                <p>This is an other test text.</p>
+                """).html(),
+                contentEnrichedBySearchResults -> this.contentEnrichedBySearchResults = contentEnrichedBySearchResults);
+
+        browserSearchViewModel.setSearchText("test");
+        browserSearchViewModel.searchOccurrences();
+
+        assertEquals(Jsoup.parseBodyFragment("""
+                <p>This is a <span style='background-color: yellow' id='match-1'>test</span> text.</p>
+                <p>This is an other <span style='background-color: yellow' id='match-2'>test</span> text.</p>
+                """).html(), contentEnrichedBySearchResults.enrichedContent());
+
+        assertTrue(browserSearchViewModel.nextOccurrenceEnabled());
     }
 }
