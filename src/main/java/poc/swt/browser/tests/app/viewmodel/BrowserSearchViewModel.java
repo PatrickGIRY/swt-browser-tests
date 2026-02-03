@@ -24,8 +24,6 @@ public class BrowserSearchViewModel {
 
     private boolean wholeWord;
 
-    private boolean previousOccurrenceEnabled;
-
     private int currentOccurrenceIndex;
     private int lastOccurrenceIndex;
 
@@ -65,7 +63,7 @@ public class BrowserSearchViewModel {
     }
 
     public boolean previousOccurrenceEnabled() {
-        return previousOccurrenceEnabled;
+        return currentOccurrenceIndex > 1;
     }
 
     public int currentOccurrenceIndex() {
@@ -75,14 +73,12 @@ public class BrowserSearchViewModel {
     public void nextOccurrence() {
         if (currentOccurrenceIndex < lastOccurrenceIndex) {
             currentOccurrenceIndex++;
-            previousOccurrenceEnabled = true;
         }
     }
 
     public void previousOccurrence() {
         if (currentOccurrenceIndex > 1) {
             currentOccurrenceIndex--;
-            previousOccurrenceEnabled = currentOccurrenceIndex > 1;
         }
     }
 
