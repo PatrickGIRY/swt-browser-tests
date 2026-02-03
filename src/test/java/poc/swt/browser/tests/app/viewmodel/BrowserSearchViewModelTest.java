@@ -58,4 +58,20 @@ class BrowserSearchViewModelTest {
         assertTrue(browserSearchViewModel.nextOccurrenceEnabled());
         assertFalse(browserSearchViewModel.previousOccurrenceEnabled());
     }
+
+    @Test
+    void previous_occurrence_enabled_when_current_occurrence_is_greater_than_one() {
+
+        final var browserSearchViewModel = new BrowserSearchViewModel(Jsoup.parseBodyFragment("""
+                <p>This is a test text.</p>
+                <p>This is an other test text.</p>
+                """).html(),
+                contentEnrichedBySearchResults -> this.contentEnrichedBySearchResults = contentEnrichedBySearchResults);
+
+        browserSearchViewModel.setSearchText("test");
+        browserSearchViewModel.searchOccurrences();
+        browserSearchViewModel.nextOccurrence();
+
+        assertTrue(browserSearchViewModel.previousOccurrenceEnabled());
+    }
 }
