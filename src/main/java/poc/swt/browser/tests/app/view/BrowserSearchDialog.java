@@ -29,7 +29,6 @@ public class BrowserSearchDialog extends Dialog {
     private Label occurrenceInfosLabel;
     private Button nextOccurrenceButton;
     private Button previousOccurrenceButton;
-    private Button closeButton;
 
     public BrowserSearchDialog(Browser browser) {
         super(browser.getShell());
@@ -152,7 +151,7 @@ public class BrowserSearchDialog extends Dialog {
                     }
                 });
 
-                closeButton = new Button(buttonGroup, SWT.PUSH);
+                final var closeButton = new Button(buttonGroup, SWT.PUSH);
                 closeButton.setText("Cancel");
                 closeButton.setLayoutData(gridData);
                 closeButton.addSelectionListener(new SelectionAdapter() {
