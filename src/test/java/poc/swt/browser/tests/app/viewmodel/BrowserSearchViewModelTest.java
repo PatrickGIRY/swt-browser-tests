@@ -20,6 +20,7 @@ class BrowserSearchViewModelTest {
         assertFalse(browserSearchViewModel.nextOccurrenceEnabled());
         assertFalse(browserSearchViewModel.previousOccurrenceEnabled());
         assertNull(contentEnrichedBySearchResults);
+        assertEquals("Occurrence 000 / 000", browserSearchViewModel.occurrenceInfos());
     }
 
     @Test
@@ -38,6 +39,7 @@ class BrowserSearchViewModelTest {
 
         assertFalse(browserSearchViewModel.nextOccurrenceEnabled());
         assertFalse(browserSearchViewModel.previousOccurrenceEnabled());
+        assertEquals("Occurrence 001 / 001", browserSearchViewModel.occurrenceInfos());
     }
     @Test
     void search_several_occurrences_in_text_in_html_document_text_nodes() {
@@ -57,6 +59,7 @@ class BrowserSearchViewModelTest {
 
         assertTrue(browserSearchViewModel.nextOccurrenceEnabled());
         assertFalse(browserSearchViewModel.previousOccurrenceEnabled());
+        assertEquals("Occurrence 001 / 002", browserSearchViewModel.occurrenceInfos());
     }
 
     @Test
@@ -73,5 +76,7 @@ class BrowserSearchViewModelTest {
         browserSearchViewModel.nextOccurrence();
 
         assertTrue(browserSearchViewModel.previousOccurrenceEnabled());
+        assertEquals("Occurrence 002 / 002", browserSearchViewModel.occurrenceInfos());
     }
+
 }

@@ -25,6 +25,7 @@ public class BrowserSearchDialog extends Dialog {
     private Text searchText;
     private Button caseSensitiveButton;
     private Button wholeWordButton;
+    private Label occurrenceInfosLabel;
     private Button nextOccurrenceButton;
     private Button previousOccurrenceButton;
     private Button closeButton;
@@ -54,6 +55,7 @@ public class BrowserSearchDialog extends Dialog {
         browser.execute(script);
         nextOccurrenceButton.setEnabled(viewModel.nextOccurrenceEnabled());
         previousOccurrenceButton.setEnabled(viewModel.previousOccurrenceEnabled());
+        occurrenceInfosLabel.setText(viewModel.occurrenceInfos());
     }
 
     private Consumer<ContentEnrichedBySearchResults> onContentEnrichedBySearchResults(Browser browser) {
@@ -61,6 +63,7 @@ public class BrowserSearchDialog extends Dialog {
             browser.setText(contentEnrichedBySearchResults.enrichedContent());
             nextOccurrenceButton.setEnabled(viewModel.nextOccurrenceEnabled());
             previousOccurrenceButton.setEnabled(viewModel.previousOccurrenceEnabled());
+            occurrenceInfosLabel.setText(viewModel.occurrenceInfos());
         };
     }
 
@@ -111,6 +114,10 @@ public class BrowserSearchDialog extends Dialog {
                         viewModel.setWholeWord(wholeWordButton.getSelection());
                     }
                 });
+
+                occurrenceInfosLabel = new Label(group, SWT.NONE);
+                occurrenceInfosLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, true, 2, 1));
+                occurrenceInfosLabel.setText(viewModel.occurrenceInfos());
 
                 final var buttonGroup = new Group(container, SWT.NONE);
                 buttonGroup.setLayout(new GridLayout(1, false));

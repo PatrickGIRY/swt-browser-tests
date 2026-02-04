@@ -27,6 +27,7 @@ public class BrowserSearchViewModel {
     private int currentOccurrenceIndex;
     private int lastOccurrenceIndex;
 
+
     public BrowserSearchViewModel(String originalContent, Consumer<ContentEnrichedBySearchResults> contentEnrichedBySearchResultsConsumer) {
         this.originalContent = originalContent;
         this.contentEnrichedBySearchResultsConsumer = contentEnrichedBySearchResultsConsumer;
@@ -68,6 +69,10 @@ public class BrowserSearchViewModel {
 
     public int currentOccurrenceIndex() {
         return currentOccurrenceIndex;
+    }
+
+    public String occurrenceInfos() {
+        return String.format("Occurrence %03d / %03d", currentOccurrenceIndex, lastOccurrenceIndex);
     }
 
     public void nextOccurrence() {
