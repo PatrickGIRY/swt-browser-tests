@@ -1,6 +1,7 @@
 package poc.swt.browser.tests.app.view;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressAdapter;
@@ -32,6 +33,7 @@ public class BrowserSearchDialog extends Dialog {
 
     public BrowserSearchDialog(Browser browser) {
         super(browser.getShell());
+
         setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE);
         this.browser = browser;
         viewModel = new BrowserSearchViewModel(
@@ -157,7 +159,13 @@ public class BrowserSearchDialog extends Dialog {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         viewModel.cancelSearch();
+                        buttonPressed(IDialogConstants.CANCEL_ID);
                     }
+                });
+
+                getShell().addListener(SWT.Close, event -> {
+                    viewModel.cancelSearch();
+                    event.doit = false;
                 });
             }
         }
