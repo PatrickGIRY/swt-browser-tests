@@ -94,7 +94,7 @@ public class BrowserSearchViewModel {
     }
 
     public void cancelSearch() {
-
+        this.browserText = originalContent;
     }
 
     public void searchOccurrences() {

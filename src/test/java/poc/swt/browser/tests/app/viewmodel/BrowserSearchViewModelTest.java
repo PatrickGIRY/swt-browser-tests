@@ -87,7 +87,7 @@ class BrowserSearchViewModelTest {
         browserSearchViewModel.setSearchText("test");
         browserSearchViewModel.searchOccurrences();
         browserSearchViewModel.searchOccurrences();
-        
+
         assertEquals("Occurrence 001 / 002", browserSearchViewModel.occurrenceInfos());
     }
 
@@ -108,4 +108,21 @@ class BrowserSearchViewModelTest {
         assertEquals("Occurrence 002 / 002", browserSearchViewModel.occurrenceInfos());
     }
 
+    @Test
+    void cancel_search_set_browser_text_with_original_content() {
+
+        final var originalContent = Jsoup.parseBodyFragment("""
+                <p>This is a test text.</p>
+                <p>This is an other test text.</p>
+                """).html();
+
+        final var browserSearchViewModel = new BrowserSearchViewModel(originalContent,
+                onContentEnrichedBySearchResults);
+
+        browserSearchViewModel.setSearchText("test");
+        browserSearchViewModel.searchOccurrences();
+        browserSearchViewModel.cancelSearch();
+
+        assertEquals(originalContent, browserSearchViewModel.browserText());
+    }
 }

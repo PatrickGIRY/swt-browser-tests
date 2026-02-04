@@ -147,7 +147,7 @@ public class BrowserSearchDialog extends Dialog {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         viewModel.previousOccurrence();
-                        browser.setText(browser.getText());
+                        browser.setText(viewModel.browserText());
                     }
                 });
 
@@ -158,12 +158,14 @@ public class BrowserSearchDialog extends Dialog {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         viewModel.cancelSearch();
+                        browser.setText(viewModel.browserText());
                         buttonPressed(IDialogConstants.CANCEL_ID);
                     }
                 });
 
                 getShell().addListener(SWT.Close, event -> {
                     viewModel.cancelSearch();
+                    browser.setText(viewModel.browserText());
                     event.doit = false;
                 });
             }
