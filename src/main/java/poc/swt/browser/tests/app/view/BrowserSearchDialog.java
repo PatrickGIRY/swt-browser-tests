@@ -61,7 +61,7 @@ public class BrowserSearchDialog extends Dialog {
 
     private Consumer<ContentEnrichedBySearchResults> onContentEnrichedBySearchResults(Browser browser) {
         return contentEnrichedBySearchResults -> {
-            browser.setText(contentEnrichedBySearchResults.enrichedContent());
+            browser.setText(viewModel.browserText());
             nextOccurrenceButton.setEnabled(viewModel.nextOccurrenceEnabled());
             previousOccurrenceButton.setEnabled(viewModel.previousOccurrenceEnabled());
             occurrenceInfosLabel.setText(viewModel.occurrenceInfos());

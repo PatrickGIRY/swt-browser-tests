@@ -16,6 +16,8 @@ public class BrowserSearchViewModel {
 
     private final String originalContent;
 
+    private String browserText;
+
     private final Consumer<ContentEnrichedBySearchResults> contentEnrichedBySearchResultsConsumer;
 
     private Pattern searchTextPattern;
@@ -59,6 +61,10 @@ public class BrowserSearchViewModel {
         this.wholeWord = wholeWord;
     }
 
+    public String browserText() {
+        return browserText;
+    }
+
     public boolean nextOccurrenceEnabled() {
         return currentOccurrenceIndex > 0 && currentOccurrenceIndex < lastOccurrenceIndex;
     }
@@ -92,14 +98,17 @@ public class BrowserSearchViewModel {
     }
 
     public void searchOccurrences() {
+        this.browserText = enrichContent();
+        this.currentOccurrenceIndex = 1;
+        contentEnrichedBySearchResultsConsumer.accept(new ContentEnrichedBySearchResults());
+    }
 
+    private String enrichContent() {
         final var document = Jsoup.parse(this.originalContent);
         for (final var node : document.body().childNodes()) {
             processNode(node);
         }
-        final var enrichedContent = document.html();
-        this.currentOccurrenceIndex = 1;
-        contentEnrichedBySearchResultsConsumer.accept(new ContentEnrichedBySearchResults(enrichedContent));
+        return document.html();
     }
 
     private void processNode(Node node) {

@@ -2,24 +2,30 @@ package poc.swt.browser.tests.app.viewmodel;
 
 import org.jsoup.Jsoup;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.then;
 
+@ExtendWith(MockitoExtension.class)
 class BrowserSearchViewModelTest {
 
-    private ContentEnrichedBySearchResults contentEnrichedBySearchResults;
+    @Mock
+    private Consumer<ContentEnrichedBySearchResults> onContentEnrichedBySearchResults;
 
     @Test
     void create_browser_search_view_model() {
-        final var browserSearchViewModel = new BrowserSearchViewModel("",
-                contentEnrichedBySearchResults -> this.contentEnrichedBySearchResults = contentEnrichedBySearchResults);
+        final var browserSearchViewModel = new BrowserSearchViewModel("", onContentEnrichedBySearchResults);
 
         assertEquals("",browserSearchViewModel.searchText());
         assertFalse(browserSearchViewModel.caseSensitive());
         assertFalse(browserSearchViewModel.wholeWord());
         assertFalse(browserSearchViewModel.nextOccurrenceEnabled());
         assertFalse(browserSearchViewModel.previousOccurrenceEnabled());
-        assertNull(contentEnrichedBySearchResults);
         assertEquals("Occurrence 000 / 000", browserSearchViewModel.occurrenceInfos());
     }
 
@@ -28,34 +34,42 @@ class BrowserSearchViewModelTest {
         final var browserSearchViewModel = new BrowserSearchViewModel(Jsoup.parseBodyFragment("""
                 <p>This is a test text</p>
                 """).html(),
-                contentEnrichedBySearchResults -> this.contentEnrichedBySearchResults = contentEnrichedBySearchResults);
+                onContentEnrichedBySearchResults);
 
         browserSearchViewModel.setSearchText("test");
         browserSearchViewModel.searchOccurrences();
 
+        then(onContentEnrichedBySearchResults)
+                .should()
+                        .accept(new ContentEnrichedBySearchResults());
+
         assertEquals(Jsoup.parseBodyFragment("""
                 <p>This is a <span style='background-color: yellow' id='match-1'>test</span> text</p>
-                """).html(), contentEnrichedBySearchResults.enrichedContent());
-
+                """).html(), browserSearchViewModel.browserText());
         assertFalse(browserSearchViewModel.nextOccurrenceEnabled());
         assertFalse(browserSearchViewModel.previousOccurrenceEnabled());
         assertEquals("Occurrence 001 / 001", browserSearchViewModel.occurrenceInfos());
     }
+
     @Test
     void search_several_occurrences_in_text_in_html_document_text_nodes() {
         final var browserSearchViewModel = new BrowserSearchViewModel(Jsoup.parseBodyFragment("""
                 <p>This is a test text.</p>
                 <p>This is an other test text.</p>
                 """).html(),
-                contentEnrichedBySearchResults -> this.contentEnrichedBySearchResults = contentEnrichedBySearchResults);
+                onContentEnrichedBySearchResults);
 
         browserSearchViewModel.setSearchText("test");
         browserSearchViewModel.searchOccurrences();
 
+        then(onContentEnrichedBySearchResults)
+                .should()
+                        .accept(new ContentEnrichedBySearchResults());
+
         assertEquals(Jsoup.parseBodyFragment("""
                 <p>This is a <span style='background-color: yellow' id='match-1'>test</span> text.</p>
                 <p>This is an other <span style='background-color: yellow' id='match-2'>test</span> text.</p>
-                """).html(), contentEnrichedBySearchResults.enrichedContent());
+                """).html(), browserSearchViewModel.browserText());
 
         assertTrue(browserSearchViewModel.nextOccurrenceEnabled());
         assertFalse(browserSearchViewModel.previousOccurrenceEnabled());
@@ -69,7 +83,7 @@ class BrowserSearchViewModelTest {
                 <p>This is a test text.</p>
                 <p>This is an other test text.</p>
                 """).html(),
-                contentEnrichedBySearchResults -> this.contentEnrichedBySearchResults = contentEnrichedBySearchResults);
+                onContentEnrichedBySearchResults);
 
         browserSearchViewModel.setSearchText("test");
         browserSearchViewModel.searchOccurrences();
