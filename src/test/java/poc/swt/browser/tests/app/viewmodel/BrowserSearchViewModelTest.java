@@ -77,6 +77,21 @@ class BrowserSearchViewModelTest {
     }
 
     @Test
+    void search_several_occurrences_in_text_in_html_document_several_time_must_have_the_same_last_index() {
+        final var browserSearchViewModel = new BrowserSearchViewModel(Jsoup.parseBodyFragment("""
+                <p>This is a test text.</p>
+                <p>This is an other test text.</p>
+                """).html(),
+                onContentEnrichedBySearchResults);
+
+        browserSearchViewModel.setSearchText("test");
+        browserSearchViewModel.searchOccurrences();
+        browserSearchViewModel.searchOccurrences();
+        
+        assertEquals("Occurrence 001 / 002", browserSearchViewModel.occurrenceInfos());
+    }
+
+    @Test
     void previous_occurrence_enabled_when_current_occurrence_is_greater_than_one() {
 
         final var browserSearchViewModel = new BrowserSearchViewModel(Jsoup.parseBodyFragment("""

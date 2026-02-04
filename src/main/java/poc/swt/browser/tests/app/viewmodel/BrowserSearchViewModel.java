@@ -104,6 +104,7 @@ public class BrowserSearchViewModel {
     }
 
     private String enrichContent() {
+        this.lastOccurrenceIndex = 0;
         final var document = Jsoup.parse(this.originalContent);
         for (final var node : document.body().childNodes()) {
             processNode(node);
