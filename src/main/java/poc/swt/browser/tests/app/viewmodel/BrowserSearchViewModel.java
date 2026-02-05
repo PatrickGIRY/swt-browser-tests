@@ -42,7 +42,8 @@ public class BrowserSearchViewModel {
     }
 
     public void setSearchText(String searchText) {
-        this.searchTextPattern = Pattern.compile(searchText, Pattern.CASE_INSENSITIVE);
+        this.searchTextPattern =
+                caseSensitive ? Pattern.compile(searchText) : Pattern.compile(searchText, Pattern.CASE_INSENSITIVE);
     }
 
     public boolean caseSensitive() {
@@ -51,6 +52,8 @@ public class BrowserSearchViewModel {
 
     public void setCaseSensitive(boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
+        setSearchText(searchText());
+        searchOccurrences();
     }
 
     public boolean wholeWord() {
