@@ -42,7 +42,7 @@ public class BrowserSearchViewModel {
     }
 
     public void setSearchText(String searchText) {
-        this.searchTextPattern = Pattern.compile(searchText);
+        this.searchTextPattern = Pattern.compile(searchText, Pattern.CASE_INSENSITIVE);
     }
 
     public boolean caseSensitive() {

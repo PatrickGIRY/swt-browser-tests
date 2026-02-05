@@ -92,6 +92,28 @@ class BrowserSearchViewModelTest {
     }
 
     @Test
+    void search_several_occurrences_in_text_in_html_document_without_distinguished_case_sensitive() {
+        final var browserSearchViewModel = new BrowserSearchViewModel(Jsoup.parseBodyFragment("""
+                <p>This is a test text.</p>
+                <p>This is an other Test text.</p>
+                """).html(),
+                onContentEnrichedBySearchResults);
+
+        browserSearchViewModel.setSearchText("test");
+
+        browserSearchViewModel.searchOccurrences();
+
+        then(onContentEnrichedBySearchResults)
+                .should()
+                .accept(new ContentEnrichedBySearchResults());
+
+        assertEquals(Jsoup.parseBodyFragment("""
+                <p>This is a <span style='background-color: yellow' id='match-1'>test</span> text.</p>
+                <p>This is an other <span style='background-color: yellow' id='match-2'>Test</span> text.</p>
+                """).html(), browserSearchViewModel.browserText());
+    }
+
+    @Test
     void previous_occurrence_enabled_when_current_occurrence_is_greater_than_one() {
 
         final var browserSearchViewModel = new BrowserSearchViewModel(Jsoup.parseBodyFragment("""
