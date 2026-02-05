@@ -47,6 +47,10 @@ public class BrowserSearchDialog extends Dialog {
         });
     }
 
+    private Consumer<ContentEnrichedBySearchResults> onContentEnrichedBySearchResults(Browser browser) {
+        return contentEnrichedBySearchResults -> browser.setText(viewModel.browserText());
+    }
+
     private void scrollToMatch() {
         String script = String.format("""
                 let matchElement = document.getElementById('match-%d');
@@ -54,18 +58,27 @@ public class BrowserSearchDialog extends Dialog {
                 """, viewModel.currentOccurrenceIndex());
         LOG.info("focus match element script \"{}\"", script);
         browser.execute(script);
-        nextOccurrenceButton.setEnabled(viewModel.nextOccurrenceEnabled());
-        previousOccurrenceButton.setEnabled(viewModel.previousOccurrenceEnabled());
-        occurrenceInfosLabel.setText(viewModel.occurrenceInfos());
+        updateNextOccurrenceButtonActivation();
+        updatePreviousOccurrenceButtonActivation();
+        updateOccurrenceInfosLabelText();
     }
 
-    private Consumer<ContentEnrichedBySearchResults> onContentEnrichedBySearchResults(Browser browser) {
-        return contentEnrichedBySearchResults -> {
-            browser.setText(viewModel.browserText());
+    private void updateNextOccurrenceButtonActivation() {
+        if (!nextOccurrenceButton.isDisposed()) {
             nextOccurrenceButton.setEnabled(viewModel.nextOccurrenceEnabled());
+        }
+    }
+
+    private void updatePreviousOccurrenceButtonActivation() {
+        if (!previousOccurrenceButton.isDisposed()) {
             previousOccurrenceButton.setEnabled(viewModel.previousOccurrenceEnabled());
+        }
+    }
+
+    private void updateOccurrenceInfosLabelText() {
+        if (!occurrenceInfosLabel.isDisposed()) {
             occurrenceInfosLabel.setText(viewModel.occurrenceInfos());
-        };
+        }
     }
 
     @Override
