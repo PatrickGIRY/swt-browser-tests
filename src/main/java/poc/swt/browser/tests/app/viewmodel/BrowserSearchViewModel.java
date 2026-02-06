@@ -29,7 +29,6 @@ public class BrowserSearchViewModel {
     private int currentOccurrenceIndex;
     private int lastOccurrenceIndex;
 
-
     public BrowserSearchViewModel(String originalContent, Consumer<ContentEnrichedBySearchResults> contentEnrichedBySearchResultsConsumer) {
         this.originalContent = originalContent;
         this.contentEnrichedBySearchResultsConsumer = contentEnrichedBySearchResultsConsumer;
@@ -42,8 +41,9 @@ public class BrowserSearchViewModel {
     }
 
     public void setSearchText(String searchText) {
+        final var regex = wholeWord ? "\\b" + searchText + "\\b" : searchText;
         this.searchTextPattern =
-                caseSensitive ? Pattern.compile(searchText) : Pattern.compile(searchText, Pattern.CASE_INSENSITIVE);
+                caseSensitive ? Pattern.compile(regex) : Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
     }
 
     public boolean caseSensitive() {
@@ -62,6 +62,8 @@ public class BrowserSearchViewModel {
 
     public void setWholeWord(boolean wholeWord) {
         this.wholeWord = wholeWord;
+        setSearchText(searchText());
+        searchOccurrences();
     }
 
     public String browserText() {
@@ -102,17 +104,26 @@ public class BrowserSearchViewModel {
 
     public void searchOccurrences() {
         this.browserText = enrichContent();
-        this.currentOccurrenceIndex = 1;
+        if(hasOccurrences()) {
+            this.currentOccurrenceIndex = 1;
+        } else {
+            this.currentOccurrenceIndex = 0;
+        }
         contentEnrichedBySearchResultsConsumer.accept(new ContentEnrichedBySearchResults());
+    }
+
+    private boolean hasOccurrences() {
+        return this.lastOccurrenceIndex > 0;
     }
 
     private String enrichContent() {
         this.lastOccurrenceIndex = 0;
+        this.currentOccurrenceIndex = 0;
         final var document = Jsoup.parse(this.originalContent);
         for (final var node : document.body().childNodes()) {
             processNode(node);
         }
-        return document.html();
+        return hasOccurrences() ? document.html() : this.originalContent;
     }
 
     private void processNode(Node node) {

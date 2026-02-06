@@ -36,8 +36,51 @@ class BrowserSearchViewModelTest {
                 """).html(),
                 onContentEnrichedBySearchResults);
 
-        browserSearchViewModel.setSearchText("test");
+        browserSearchViewModel.setSearchText("tes");
         browserSearchViewModel.searchOccurrences();
+
+        then(onContentEnrichedBySearchResults)
+                .should()
+                        .accept(new ContentEnrichedBySearchResults());
+
+        assertEquals(Jsoup.parseBodyFragment("""
+                <p>This is a <span style='background-color: yellow' id='match-1'>tes</span>t  text</p>
+                """).html(), browserSearchViewModel.browserText());
+        assertFalse(browserSearchViewModel.nextOccurrenceEnabled());
+        assertFalse(browserSearchViewModel.previousOccurrenceEnabled());
+        assertEquals("Occurrence 001 / 001", browserSearchViewModel.occurrenceInfos());
+    }
+
+    @Test
+    void search_not_found_in_text_in_html_document_text_nodes() {
+        final var originalContent = Jsoup.parseBodyFragment("""
+                <p>This is a test text</p>
+                """).html();
+        final var browserSearchViewModel = new BrowserSearchViewModel(originalContent,
+                onContentEnrichedBySearchResults);
+
+        browserSearchViewModel.setSearchText("foo");
+        browserSearchViewModel.searchOccurrences();
+
+        then(onContentEnrichedBySearchResults)
+                .should()
+                .accept(new ContentEnrichedBySearchResults());
+
+        assertEquals(originalContent, browserSearchViewModel.browserText());
+        assertFalse(browserSearchViewModel.nextOccurrenceEnabled());
+        assertFalse(browserSearchViewModel.previousOccurrenceEnabled());
+        assertEquals("Occurrence 000 / 000", browserSearchViewModel.occurrenceInfos());
+    }
+
+    @Test
+    void search_one_occurrence_of_whole_word_in_text_in_html_document_text_nodes() {
+        final var browserSearchViewModel = new BrowserSearchViewModel(Jsoup.parseBodyFragment("""
+                <p>This is a test text</p>
+                """).html(),
+                onContentEnrichedBySearchResults);
+
+        browserSearchViewModel.setSearchText("test");
+        browserSearchViewModel.setWholeWord(true);
 
         then(onContentEnrichedBySearchResults)
                 .should()
