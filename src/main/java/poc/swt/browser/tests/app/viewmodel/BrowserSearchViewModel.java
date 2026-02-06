@@ -20,7 +20,7 @@ public class BrowserSearchViewModel {
 
     private final Consumer<ContentEnrichedBySearchResults> contentEnrichedBySearchResultsConsumer;
 
-    private Pattern searchTextPattern;
+    private String searchText;
 
     private boolean caseSensitive;
 
@@ -37,13 +37,11 @@ public class BrowserSearchViewModel {
     }
 
     public String searchText() {
-        return searchTextPattern != null ? searchTextPattern.pattern() : "";
+        return searchText != null ? searchText : "";
     }
 
     public void setSearchText(String searchText) {
-        final var regex = wholeWord ? "\\b" + searchText + "\\b" : searchText;
-        this.searchTextPattern =
-                caseSensitive ? Pattern.compile(regex) : Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        this.searchText = searchText;
     }
 
     public boolean caseSensitive() {
@@ -52,7 +50,6 @@ public class BrowserSearchViewModel {
 
     public void setCaseSensitive(boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
-        setSearchText(searchText());
         searchOccurrences();
     }
 
@@ -62,7 +59,6 @@ public class BrowserSearchViewModel {
 
     public void setWholeWord(boolean wholeWord) {
         this.wholeWord = wholeWord;
-        setSearchText(searchText());
         searchOccurrences();
     }
 
@@ -104,7 +100,7 @@ public class BrowserSearchViewModel {
 
     public void searchOccurrences() {
         this.browserText = enrichContent();
-        if(hasOccurrences()) {
+        if (hasOccurrences()) {
             this.currentOccurrenceIndex = 1;
         } else {
             this.currentOccurrenceIndex = 0;
@@ -119,32 +115,38 @@ public class BrowserSearchViewModel {
     private String enrichContent() {
         this.lastOccurrenceIndex = 0;
         this.currentOccurrenceIndex = 0;
+        final var pattern = buildSearchTextPattern();
         final var document = Jsoup.parse(this.originalContent);
         for (final var node : document.body().childNodes()) {
-            processNode(node);
+            processNode(node, pattern);
         }
         return hasOccurrences() ? document.html() : this.originalContent;
     }
 
-    private void processNode(Node node) {
+    private Pattern buildSearchTextPattern() {
+        final var searchText = searchText();
+        final var regex = wholeWord ? "\\b" + searchText + "\\b" : searchText;
+        return caseSensitive ? Pattern.compile(regex) : Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+    }
+
+    private void processNode(Node node, Pattern searchTextPattern) {
         if (node instanceof TextNode textNode) {
             final var text = textNode.text();
-            final var processedText = processText(text);
+            final var processedText = processText(text, searchTextPattern);
             if (!processedText.equals(text)) {
                 Element parent = textNode.parent();
                 if (parent != null) {
                     parent.html(processedText);
                 }
             }
-        }
-        else if (node instanceof Element element) {
+        } else if (node instanceof Element element) {
             for (final var childNode : element.childNodes()) {
-                processNode(childNode);
+                processNode(childNode, searchTextPattern);
             }
         }
     }
 
-    private String processText(String text) {
+    private String processText(String text, Pattern searchTextPattern) {
         final var matcher = searchTextPattern.matcher(text);
         final var contentEnrichedBuilder = new StringBuilder();
         while (matcher.find()) {
