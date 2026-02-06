@@ -115,10 +115,10 @@ public class BrowserSearchViewModel {
     private String enrichContent() {
         this.lastOccurrenceIndex = 0;
         this.currentOccurrenceIndex = 0;
-        final var pattern = buildSearchTextPattern();
+        final var searchTextPattern = buildSearchTextPattern();
         final var document = Jsoup.parse(this.originalContent);
         for (final var node : document.body().childNodes()) {
-            processNode(node, pattern);
+            processNode(node, searchTextPattern);
         }
         return hasOccurrences() ? document.html() : this.originalContent;
     }
