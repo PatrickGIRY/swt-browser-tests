@@ -140,6 +140,17 @@ public class BrowserSearchDialog extends Dialog {
                 buttonGroup.setLayoutData(gridData);
 
                 gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+
+                final var searchOccurrencesButton = new Button(buttonGroup, SWT.PUSH);
+                searchOccurrencesButton.setText("Search");
+                searchOccurrencesButton.setLayoutData(gridData);
+                searchOccurrencesButton.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        viewModel.searchOccurrences();
+                    }
+                });
+
                 nextOccurrenceButton = new Button(buttonGroup, SWT.PUSH);
                 nextOccurrenceButton.setText("Next");
                 nextOccurrenceButton.setLayoutData(gridData);
